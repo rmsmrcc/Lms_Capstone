@@ -1,8 +1,12 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const mysql = require("mysql");
+const dotenv = require('dotenv');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+dotenv.config({ path: './.env'});
 
 var dashboardRouter = require('./routes/dashboard');
 var subjectRouter = require('./routes/subject');
@@ -10,6 +14,13 @@ var calendarRouter = require('./routes/calendar');
 var usersRouter = require('./routes/users');
 
 var app = express();
+const db = mysql.createConnection({
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE
+});
+
 const PORT = process.env.PORT ||5000;
 
 app.listen(PORT, console.log(
@@ -19,6 +30,14 @@ app.listen(PORT, console.log(
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+db.connect( (error) => {
+  if(error) {
+    console.log(error)
+  } else {
+    console.log("MYSQL Connected...")
+  }
+})
 
 app.use(logger('dev'));
 app.use(express.json());

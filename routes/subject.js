@@ -1,9 +1,8 @@
 var express = require('express');
 var router = express.Router();
+var subjectController = require('../controller/subjectController');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('subject');
-});
+router.get('/', subjectController.getSubject);
+router.post('/subject', subjectController.postSubject);
 
 module.exports = router;
