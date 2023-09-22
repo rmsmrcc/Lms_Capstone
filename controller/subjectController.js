@@ -1,3 +1,4 @@
+var express = require('express');
 const mysql = require("mysql");
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -9,55 +10,70 @@ const db = mysql.createConnection({
 exports.getSubject = (req, res) => {
     res.render('subject');
 };
-// exports.postSubject = (req, res) => {
-//     const { subID, subName } = req.body;
-
-//     db.query('SELECT * FROM t_subject where subName = ?',[subName],function(error,results,fields){
-//           if(results.length > 0){ 
-//                 res.send("Already have Subject");
-//           }
-//           else{
-//                 var sql = 'INSERT INTO `t_subject` (`subID`,`subName`) VALUES (?.?)';
-//                 var values = [subID, subName];
-//                 db.connect(function(err){
-//                     db.query(sql, values, function (err, result){
-//                             if(err) throw err;
-//                             console.log("entry added");
-//                             db.destroy();
-//                             res.render('subject');
-//                       })
-//                 });
-//           }
-//     }); 
-// };
-
 exports.postSubject = (req, res) => {
-    console.log(req.body);
-  
-    const { subID, subName } = req.body;
-  
-    db.query('SELECT subName FROM t_subject WHERE subName = ?', [subName], async (error, results) => {
-      if(error) {
-        console.log(error);
+    const { subID, subName } = req.body; // Assuming you're using body-parser middleware
+
+  db.query(
+    'INSERT INTO t_subject (subID, subName) VALUES (?, ?)',
+    [subID, subName],
+    (error, results) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send('Error adding subject');
+      } else {
+        console.log('Subject added successfully');
+        res.redirect('/'); // Redirect to a success page or wherever you like
       }
+    }
+  );
+    // const { subID, subName } = req.body;
+
+    // db.query('SELECT * FROM t_subject where subName = ?',[subName],function(error,results,fields){
+    //       if(results.length > 0){ 
+    //             res.send("Already have Subject");
+    //       }
+    //       else{
+    //             var sql = 'INSERT INTO `t_subject` (`subID`,`subName`) VALUES (?.?)';
+    //             var values = [subID, subName];
+    //             db.connect(function(err){
+    //                 db.query(sql, values, function (err, result){
+    //                         if(err) throw err;
+    //                         console.log("entry added");
+    //                         db.destroy();
+    //                         res.render('subject');
+    //                   })
+    //             });
+    //       }
+    // }); 
+};
+
+// exports.postSubject = (req, res) => {
+//     console.log(req.body);
   
-      if( results.length > 0 ) {
-        return res.render('subject', {
-          message: 'That subject is already in use'
-        })
-      } 
+//     const { subID, subName } = req.body;
+  
+//     db.query('SELECT subName FROM t_subject WHERE subName = ?', [subName], async (error, results) => {
+//       if(error) {
+//         console.log(error);
+//       }
+  
+//       if( results.length > 0 ) {
+//         return res.render('subject', {
+//           message: 'That subject is already in use'
+//         })
+//       } 
      
   
-      db.query('INSERT INTO t_subject SET ?', {subID: subID, subName: subName }, (error, results) => {
-        if(error) {
-          console.log(error);
-        } else {
-          console.log(results);
-          return res.render('subject', {
-            message: 'Created Successfull'
-          });
-        }
-      })
-    });
+//       db.query('INSERT INTO t_subject SET ?', {subID: subID, subName: subName }, (error, results) => {
+//         if(error) {
+//           console.log(error);
+//         } else {
+//           console.log(results);
+//           return res.render('subject', {
+//             message: 'Created Successfull'
+//           });
+//         }
+//       })
+//     });
   
-  }
+//   }
